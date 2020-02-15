@@ -1,0 +1,58 @@
+# /root/vuepress-codeserver/docker-compose.yml
+version: "3.6"
+
+services:
+  traefik:
+    container_name: traefik
+    restart: always
+    image: traefik:1.7.2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+    volumes:
+      - ./traefik.toml:/traefik.toml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./acme.json:/acme.json
+
+  code-server:
+    container_name: code-server
+    image: codercom/code-server
+    user: root
+    ports:
+      - "8080:8080"
+    volumes:
+      - /root:/projects
+    environment:
+      PASSWORD: $CODESERVERPASSWORD
+    labels: 
+      - "traefik.frontend.rule=Host:codeserver.strainovic-it.ch" # Ändern auf eigene Subdomain 
+      - "traefik.port=8080"
+    networks:
+      - web
+
+  vuepress:
+    container_name: vuepress 
+    image: node:lts-alpine
+    user: root
+    working_dir: "/src"
+    environment:
+      - HOST=0.0.0.0
+        #ports:
+            #      - "8888:8080"
+    volumes:
+      - ../vuepress-blog-portfolio-sit/src:/src:cached
+    command: sh -c "yarn vuepress dev"
+    labels:
+      - "traefik.frontend.rule=Host:vuepress.strainovic-it.ch" # Ändern auf eigene Subdomain 
+      - "traefik.port=8080"
+    networks:
+      - web
+      - internal
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false

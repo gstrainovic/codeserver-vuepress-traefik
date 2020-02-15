@@ -1,0 +1,25 @@
+# /root/docker-compose/traefik.toml
+
+defaultEntryPoints = ["http", "https"]
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+      [entryPoints.http.redirect]
+        entryPoint = "https"
+  [entryPoints.https]
+    address = ":443"
+      [entryPoints.https.tls]
+
+[acme]
+email = "g.strainovic@gmail.com" # Ersetzen durch eigene Email Adresse
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+  [acme.httpChallenge]
+  entryPoint = "http"
+
+[docker]
+domain = "strainovic-it.ch" # Ersetzen durch eigene Domain beispiel traefik.strainovic-it.ch
+watch = true
+network = "web"
