@@ -23,7 +23,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /root:/projects
+      - /root:/root
     environment:
       PASSWORD: $CODESERVERPASSWORD
     labels: 
@@ -42,8 +42,8 @@ services:
         #ports:
             #      - "8888:8080"
     volumes:
-      - ../vuepress-blog-portfolio-sit/src:/src:cached
-    command: sh -c "yarn vuepress dev"
+      - /root/vuepress:/src:cached
+    command: sh -c "yarn vuepress dev src"
     labels:
       - "traefik.frontend.rule=Host:vuepress.strainovic-it.ch" # Ändern auf eigene Subdomain 
       - "traefik.port=8080"
