@@ -19,6 +19,7 @@ services:
   code-server:
     container_name: code-server
     image: codercom/code-server
+    restart: always
     user: root
     ports:
       - "8080:8080"
@@ -33,14 +34,13 @@ services:
       - web
 
   vuepress:
+    restart: always
     container_name: vuepress 
     image: node:lts-alpine
     user: root
     working_dir: "/src"
     environment:
       - HOST=0.0.0.0
-        #ports:
-            #      - "8888:8080"
     volumes:
       - /root/vuepress:/src:cached
     command: sh -c "yarn vuepress dev src"
